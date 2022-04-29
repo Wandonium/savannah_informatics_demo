@@ -1,0 +1,15 @@
+.jp-logo {
+    /* font-size: 3.75rem; */
+    /* line-height: 1; */
+    font-weight: bold;
+    color: rgba(30,58,138,1);
+    text-decoration: none;
+}
+
+.jp-logo:hover {
+    opacity: 0.8;
+}
+
+.address-l:hover {
+    background-color: gray;
+}

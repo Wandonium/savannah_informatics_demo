@@ -1,0 +1,9 @@
+@import url(https://unpkg.com/@webpixels/css/dist/index.css);
+
+.table-row:hover {
+    background-color: #e9eff5;
+}
+
+.name-link {
+    text-decoration: none;
+}
