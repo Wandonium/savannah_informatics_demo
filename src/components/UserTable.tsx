@@ -17,11 +17,15 @@ type Address = {
     suite: string,
     city: string,
     zipcode: string,
+    no_of_users: number
 }
 
-const UsersTable: FunctionComponent = () => {
+interface Props {
+    setAddresses: React.Dispatch<React.SetStateAction<Address[]>>
+}
+
+const UsersTable: FunctionComponent<Props> = ({setAddresses}) => {
     const [users, setUsers] = useState<User[]>([]);
-    const [addresses, setAddresses] = useState<Address[]>([]);
 
     const profileImages = [
         "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
@@ -41,10 +45,23 @@ const UsersTable: FunctionComponent = () => {
         axios.get(url)
             .then(response => {
                 let users: User[] = response.data;
-                console.log('users: ', JSON.stringify(users, null, 0));
-                let addresses = users.map(user => user.address)
-                console.log('addresses: ', addresses);
+                let addresses = users.map(user => {
+                    return {...user.address, no_of_users: 1}
+                });
+                // console.log('addresses: ', addresses);
+                let countedAddresses: Address[] = [];
+                addresses.forEach((address, idx) => {
+                    for(let i = 0; i < addresses.length; i++) {
+                        if(i !== idx && address.suite === addresses[i].suite){
+                            address.no_of_users += 1;
+                            addresses.splice(i, 1);
+                        }
+                    }
+                    countedAddresses.push(address);
+                })
+                // console.log('countedAddresses: ', countedAddresses);
                 setUsers(users);
+                setAddresses(countedAddresses);
             });
     }, []);
 
