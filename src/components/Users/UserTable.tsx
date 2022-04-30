@@ -1,6 +1,7 @@
 import React, {FunctionComponent, useEffect, useState} from 'react';
 import axios from "axios";
 import './UserTable.css';
+import { Loading } from '../Loading/Loading';
 
 type User = {
     id: number,
@@ -21,11 +22,21 @@ type Address = {
 }
 
 interface Props {
-    setAddresses: React.Dispatch<React.SetStateAction<Address[]>>
+    setAddresses: React.Dispatch<React.SetStateAction<Address[]>>;
+    setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
+    setActive: React.Dispatch<React.SetStateAction<string>>;
+    setShowPostNav: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const UsersTable: FunctionComponent<Props> = ({setAddresses}) => {
+const UsersTable: FunctionComponent<Props> = ({
+    setAddresses, 
+    setCurrentUser, 
+    setActive, 
+    setShowPostNav,
+}) => {
     const [users, setUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState(false);
+
 
     const profileImages = [
         "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
@@ -41,6 +52,7 @@ const UsersTable: FunctionComponent<Props> = ({setAddresses}) => {
     ]
 
     useEffect(() => {
+        setLoading(true);
         const url = "https://jsonplaceholder.typicode.com/users";
         axios.get(url)
             .then(response => {
@@ -62,47 +74,61 @@ const UsersTable: FunctionComponent<Props> = ({setAddresses}) => {
                 // console.log('countedAddresses: ', countedAddresses);
                 setUsers(users);
                 setAddresses(countedAddresses);
+                setLoading(false);
             });
     }, []);
 
+
+
     return (
-        <div className="table-responsive">
-            <table className="table table-hover table-nowrap">
-                <thead className="thead-light">
-                    <tr>
-                        <th scope="col">id</th>
-                        <th scope="col">name</th>
-                        <th scope="col">username</th>
-                        <th scope="col">email</th>
-                        <th scope="col">phone</th>
-                        <th scope="col">website</th>
-                        <th scope="col" className="text-center">actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {users.map(user => <tr key={user.id} className="table-row">
-                        <td>{user.id}</td>
-                        <td>
-                            <img alt="..." src={profileImages[user.id -1]} className="avatar avatar-sm rounded-circle me-2"/>
-                            <a className="text-heading font-semibold name-link" href="#">{user.name}</a>
-                        </td>
-                        <td>{user.username}</td>
-                        <td>{user.email}</td>
-                        <td>{user.phone}</td>
-                        <td>{user.website}</td>
-                        <td>
-                            <div className="row">
-                                <div className="col">
-                                    <button className="btn-sm btn-primary mr-3">View Posts</button>
-                                </div>
-                                <div className="col">
-                                    <button className="btn-sm btn-success">Update User</button>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>)}
-                </tbody>
-            </table>
+        <div>
+            {
+                loading ? <Loading /> : (
+    
+                    <div className="table-responsive">
+                        <table className="table table-hover table-nowrap">
+                            <thead className="thead-light">
+                                <tr>
+                                    <th scope="col">id</th>
+                                    <th scope="col">name</th>
+                                    <th scope="col">username</th>
+                                    <th scope="col">email</th>
+                                    <th scope="col">phone</th>
+                                    <th scope="col">website</th>
+                                    <th scope="col" className="text-center">actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {users.map(user => <tr key={user.id} className="table-row">
+                                    <td>{user.id}</td>
+                                    <td>
+                                        <img alt="..." src={profileImages[user.id -1]} className="avatar avatar-sm rounded-circle me-2"/>
+                                        <a className="text-heading font-semibold name-link" href="#">{user.name}</a>
+                                    </td>
+                                    <td>{user.username}</td>
+                                    <td>{user.email}</td>
+                                    <td>{user.phone}</td>
+                                    <td>{user.website}</td>
+                                    <td>
+                                        <div className="row">
+                                            <div className="col">
+                                                <button onClick={() => {
+                                                    setCurrentUser(user);
+                                                    setActive('posts');
+                                                    setShowPostNav(true);
+                                                }} className="btn-sm btn-primary mr-3">View Posts</button>
+                                            </div>
+                                            <div className="col">
+                                                <button className="btn-sm btn-success">Update User</button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>)}
+                            </tbody>
+                        </table>
+                    </div>
+                )
+            }
         </div>
     )
 }

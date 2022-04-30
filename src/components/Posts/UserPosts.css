@@ -1,0 +1,5 @@
+.card-p {
+    background: linear-gradient(145deg, #8ceabe, #27d484);
+    border-radius: 15px;
+    box-shadow: -4px -4px 6px rgb(255 255 255 / 50%), 4px 4px 6px #25c87c, inset -4px -4px 12px rgb(255 255 255 / 10%), inset 4px 4px 12px #57e0a1;
+}
