@@ -1,19 +1,11 @@
 import React from 'react'
 import './AddressTable.css';
+import { useSelector } from 'react-redux';
+import { State } from '../../App/index';
 
-type Address = {
-    street: string,
-    suite: string,
-    city: string,
-    zipcode: string,
-    no_of_users: number
-  }
+export const AddressTable: React.FC = () => {
 
-interface AddressTableProps {
-    addresses: Address[]
-}
-
-export const AddressTable: React.FC<AddressTableProps> = ({addresses}) => {
+    const addresses = useSelector((state: State) => state.addresses);
 
     const getClass = (suite: string) => {
         if(suite.includes('Suite')) {

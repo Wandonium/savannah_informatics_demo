@@ -6,34 +6,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container } from 'react-bootstrap';
 import { AddressTable } from './components/Addresses/AddressTable';
 import { UserPosts } from './components/Posts/UserPosts';
-
-type User = {
-  id: number,
-  name: string,
-  username: string,
-  email: string,
-  phone: string,
-  website: string,
-  address: Address
-}
-
-type Address = {
-  street: string,
-  suite: string,
-  city: string,
-  zipcode: string,
-  no_of_users: number
-}
+import { User } from './App/actions';
 
 function App() {
   const [active, setActive] = useState('users');
-  const [addresses, setAddresses] = useState<Address[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [showPostNav, setShowPostNav] = useState(false);
-
-
-  // console.log('active: ', active);
-  // console.log('addresses: ', addresses);
 
   return (
     <div className="p-10 bg-surface-secondary">
@@ -42,13 +20,12 @@ function App() {
         {
           active === 'users' &&
             <UsersTable 
-              setAddresses={setAddresses} 
               setCurrentUser={setCurrentUser} 
               setActive={setActive} 
               setShowPostNav={setShowPostNav}
             /> 
         }
-        {active === 'address' && <AddressTable addresses={addresses} />}
+        {active === 'address' && <AddressTable />}
         {active === 'posts' &&  <UserPosts user={currentUser} />}
       </Container>
     </div>

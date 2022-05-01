@@ -2,40 +2,24 @@ import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import './UserPosts.css';
 import { Loading } from '../Loading/Loading';
-
-
-type User = {
-    id: number,
-    name: string,
-    username: string,
-    email: string,
-    phone: string,
-    website: string,
-    address: Address
-}
-
-type Address = {
-    street: string,
-    suite: string,
-    city: string,
-    zipcode: string,
-    no_of_users: number  
-}
-
-type Post = {
-    userId: number,
-    id: number,
-    title: string,
-    body: string
-}
+import { useDispatch, useSelector } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { actionCreators, State } from '../../App/index';
+import { User, Post } from '../../App/actions';
 
 interface UserPostsProps {
     user: User | null;
 }
 
 export const UserPosts: React.FC<UserPostsProps> = ({user}) => {
-    const [posts, setPosts] = useState<Post[]>([]);
+    // const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(false);
+
+    const dispatch = useDispatch();
+
+    const { addPosts } = bindActionCreators(actionCreators, dispatch);
+
+    const posts = useSelector((state: State) => state.posts);
 
     useEffect(() => {
         setLoading(true);
@@ -43,7 +27,8 @@ export const UserPosts: React.FC<UserPostsProps> = ({user}) => {
         axios.get(url)
             .then(response => {
                 // console.log('response: ', response.data);
-                setPosts(response.data);
+                // setPosts(response.data);
+                addPosts(response.data);
                 setLoading(false);
             });
     }, []);
@@ -56,7 +41,7 @@ export const UserPosts: React.FC<UserPostsProps> = ({user}) => {
                     <div className="mt-3">
                         { posts.map(post => {
                             return (
-                                <div className="card mb-5 bg-success card-p">
+                                <div className="card mb-5 bg-success card-p" key={post.id}>
                                     <div className="card-header">
                                         {post.title}
                                     </div>

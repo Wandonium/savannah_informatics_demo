@@ -4,85 +4,32 @@ import './UserTable.css';
 import { Loading } from '../Loading/Loading';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, Button, Form } from 'react-bootstrap';
-
-
-type User = {
-    id: number,
-    name: string,
-    username: string,
-    email: string,
-    phone: string,
-    website: string,
-    address: Address
-}
-
-type Address = {
-    street: string,
-    suite: string,
-    city: string,
-    zipcode: string,
-    no_of_users: number
-}
+import { User, Address } from '../../App/actions';
+import { useDispatch, useSelector } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { actionCreators, State } from '../../App/index';
 
 interface Props {
-    setAddresses: React.Dispatch<React.SetStateAction<Address[]>>;
     setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
     setActive: React.Dispatch<React.SetStateAction<string>>;
     setShowPostNav: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const UsersTable: FunctionComponent<Props> = ({
-    setAddresses, 
     setCurrentUser, 
     setActive, 
     setShowPostNav,
 }) => {
-    const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(false);
     const [show, setShow] = useState(false);
-    const [updateUser, setUpdateUser] = useState<User>();
+    const [editUser, setEditUser] = useState<User>();
     const [newName, setNewName] = useState('');
 
-    const handleClose = () => setShow(false);
-    const handleUpdateUser = () => {
-        setShow(false);
-        console.log('newName: ', newName);
-        setLoading(true);
-        axios.put(
-            `https://jsonplaceholder.typicode.com/users/${updateUser?.id}`,
-            {
-                ...updateUser,
-                name: newName,
-            },
-            {
-                headers: {
-                  'Content-type': 'application/json; charset=UTF-8',
-                },
-            }
-        ).then(res => {
-            let updatedUser = res.data;
-            console.log('updatedUser: ', JSON.stringify(updatedUser, null, 2));
-            let theUsers = [...users];
-            const updateIndex = theUsers.findIndex(user => user.id === updatedUser.id);
-            theUsers.splice(updateIndex, 1, updatedUser);
-            setUsers(theUsers);
-            setLoading(false);
-        })
-    }
+    const dispatch = useDispatch();
 
+    const {addUsers, updateUser, addAddresses} = bindActionCreators(actionCreators, dispatch);
 
-    const profileImages = [
-        "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTR8fHByb2ZpbGVzfGVufDB8fDB8fA%3D%3D&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
-        "https://images.unsplash.com/photo-1610271340738-726e199f0258?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
-        "https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
-        "https://images.unsplash.com/photo-1610878722345-79c5eaf6a48c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
-        "https://images.unsplash.com/photo-1612422656768-d5e4ec31fac0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
-        "https://images.unsplash.com/photo-1535931737580-a99567967ddc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjZ8fHByb2ZpbGVzfGVufDB8fDB8fA%3D%3D&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
-        "https://images.unsplash.com/photo-1517702145080-e4a4d91435bb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjB8fHByb2ZpbGVzfGVufDB8fDB8fA%3D%3D&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
-        "https://images.unsplash.com/photo-1517630800677-932d836ab680?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTd8fHByb2ZpbGVzfGVufDB8fDB8fA%3D%3D&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZmlsZXN8ZW58MHx8MHx8&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80"
-    ]
+    const users = useSelector((state: State) => state.users);
 
     useEffect(() => {
         setLoading(true);
@@ -105,13 +52,48 @@ const UsersTable: FunctionComponent<Props> = ({
                     countedAddresses.push(address);
                 })
                 // console.log('countedAddresses: ', countedAddresses);
-                setUsers(users);
-                setAddresses(countedAddresses);
+                addUsers(users);
+                addAddresses(countedAddresses);
                 setLoading(false);
             });
     }, []);
 
+    const handleClose = () => setShow(false);
+    const handleUpdateUser = () => {
+        setShow(false);
+        // console.log('newName: ', newName);
+        setLoading(true);
+        axios.put(
+            `https://jsonplaceholder.typicode.com/users/${editUser?.id}`,
+            {
+                ...editUser,
+                name: newName,
+            },
+            {
+                headers: {
+                  'Content-type': 'application/json; charset=UTF-8',
+                },
+            }
+        ).then(res => {
+            let updatedUser = res.data;
+            // console.log('updatedUser: ', JSON.stringify(updatedUser, null, 2));
+            updateUser(updatedUser);
+            setLoading(false);
+        })
+    }
 
+    const profileImages = [
+        "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTR8fHByb2ZpbGVzfGVufDB8fDB8fA%3D%3D&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
+        "https://images.unsplash.com/photo-1610271340738-726e199f0258?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
+        "https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
+        "https://images.unsplash.com/photo-1610878722345-79c5eaf6a48c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
+        "https://images.unsplash.com/photo-1612422656768-d5e4ec31fac0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
+        "https://images.unsplash.com/photo-1535931737580-a99567967ddc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjZ8fHByb2ZpbGVzfGVufDB8fDB8fA%3D%3D&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
+        "https://images.unsplash.com/photo-1517702145080-e4a4d91435bb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjB8fHByb2ZpbGVzfGVufDB8fDB8fA%3D%3D&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
+        "https://images.unsplash.com/photo-1517630800677-932d836ab680?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTd8fHByb2ZpbGVzfGVufDB8fDB8fA%3D%3D&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80",
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZmlsZXN8ZW58MHx8MHx8&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80"
+    ]
 
     return (
         <div>
@@ -121,12 +103,12 @@ const UsersTable: FunctionComponent<Props> = ({
                     <div>
                         <Modal show={show} onHide={handleClose} centered>
                             <Modal.Header closeButton>
-                            <Modal.Title>Update {updateUser?.username}'s name</Modal.Title>
+                            <Modal.Title>Update {editUser?.username}'s name</Modal.Title>
                             </Modal.Header>
                             <Modal.Body>
                             <Form>
                                 <Form.Group className="mb-3">
-                                <Form.Label>Current Name: {updateUser?.name}</Form.Label>
+                                <Form.Label>Current Name: {editUser?.name}</Form.Label>
                                 </Form.Group>
                                 <Form.Group className="mb-3">
                                 <Form.Label>New Name:</Form.Label>
@@ -134,6 +116,7 @@ const UsersTable: FunctionComponent<Props> = ({
                                     type="text"
                                     autoFocus
                                     onChange={e => setNewName(e.target.value)}
+                                    onKeyPress={e => {if(e.charCode === 13)  handleUpdateUser()}}
                                 />
                                 </Form.Group>
                             </Form>
@@ -185,7 +168,7 @@ const UsersTable: FunctionComponent<Props> = ({
                                                 </div>
                                                 <div className="col">
                                                     <button onClick={() => {
-                                                        setUpdateUser(user);
+                                                        setEditUser(user);
                                                         setShow(true);
                                                     }} className="btn-sm btn-success">Update Name</button>
                                                 </div>
