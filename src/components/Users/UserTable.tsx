@@ -37,6 +37,7 @@ const UsersTable: FunctionComponent<Props> = ({
         axios.get(url)
             .then(response => {
                 let users: User[] = response.data;
+                console.log('users: ', JSON.stringify(users, null, 2));
                 let addresses = users.map(user => {
                     return {...user.address, no_of_users: 1}
                 });
@@ -116,7 +117,7 @@ const UsersTable: FunctionComponent<Props> = ({
                                     type="text"
                                     autoFocus
                                     onChange={e => setNewName(e.target.value)}
-                                    onKeyPress={e => {if(e.charCode === 13)  handleUpdateUser()}}
+                                    onKeyPress={e => {if(e.charCode === 13 && newName !== '')  handleUpdateUser()}}
                                 />
                                 </Form.Group>
                             </Form>
@@ -125,7 +126,7 @@ const UsersTable: FunctionComponent<Props> = ({
                             <Button variant="secondary" onClick={handleClose}>
                                 Close
                             </Button>
-                            <Button variant="primary" onClick={handleUpdateUser}>
+                            <Button variant="primary" onClick={handleUpdateUser} disabled={newName === ''}>
                                 Save Changes
                             </Button>
                             </Modal.Footer>
