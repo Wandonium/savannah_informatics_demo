@@ -100,7 +100,6 @@ const UsersTable: FunctionComponent<Props> = ({
         <div>
             {
                 loading ? <Loading /> : (
-
                     <div>
                         <Modal show={show} onHide={handleClose} centered>
                             <Modal.Header closeButton>
