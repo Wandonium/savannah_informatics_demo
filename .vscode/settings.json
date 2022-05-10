@@ -1,4 +1,8 @@
 {
     "appService.defaultWebAppToDeploy": "/subscriptions/207dbdb4-a0df-4799-bd56-d2772741f435/resourceGroups/appsvc_linux_centralus_basic/providers/Microsoft.Web/sites/Savannah-Informatics-Demo",
-    "appService.deploySubpath": "."
+    "appService.deploySubpath": ".",
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ]
 }
