@@ -26,7 +26,7 @@ export const UserPosts: React.FC<UserPostsProps> = ({user}) => {
         const url = `https://jsonplaceholder.typicode.com/posts?userId=${user?.id}`;
         axios.get(url)
             .then(response => {
-                // console.log('response: ', response.data);
+                // console.log('response: ', JSON.stringify(response.data, null, 2));
                 // setPosts(response.data);
                 addPosts(response.data);
                 setLoading(false);

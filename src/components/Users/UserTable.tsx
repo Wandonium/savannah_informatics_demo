@@ -37,7 +37,7 @@ const UsersTable: FunctionComponent<Props> = ({
         axios.get(url)
             .then(response => {
                 let users: User[] = response.data;
-                console.log('users: ', JSON.stringify(users, null, 2));
+                // console.log('users: ', JSON.stringify(users, null, 2));
                 let addresses = users.map(user => {
                     return {...user.address, no_of_users: 1}
                 });
@@ -52,7 +52,7 @@ const UsersTable: FunctionComponent<Props> = ({
                     }
                     countedAddresses.push(address);
                 })
-                // console.log('countedAddresses: ', countedAddresses);
+                // console.log('countedAddresses: ', JSON.stringify(countedAddresses, null, 2));
                 addUsers(users);
                 addAddresses(countedAddresses);
                 setLoading(false);
